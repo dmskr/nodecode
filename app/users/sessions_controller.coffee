@@ -2,13 +2,13 @@ passport.serializeUser (user, done) ->
   done(null, user._id)
 
 passport.deserializeUser (id, done) ->
-  Skin.db.users.findById(id, done)
+  Code.db.users.findById(id, done)
 
 passport.use new LocalStrategy (username, password, done) ->
   if (!username || username.length == 0)
     return done(null, false, user: null, errors: { username: 'Username is required' })
 
-  Skin.db.users.find(username: username.toLowerCase()).toArray (err, users) ->
+  Code.db.users.find(username: username.toLowerCase()).toArray (err, users) ->
     return done(err) if (err)
 
     user = users.first()
@@ -26,7 +26,7 @@ passport.use new LocalStrategy (username, password, done) ->
 
 
 exports.new = (req, res, next) ->
-  res.render Skin.root + '/app/users/public/login.jade'
+  res.render Code.root + '/app/users/public/login.jade'
 
 exports.create = (req, res, next) ->
   renderError = (error) ->
@@ -35,7 +35,7 @@ exports.create = (req, res, next) ->
         return res.json('200', { errors: { _id: error }})
       else
         req.flash('error', error)
-        return res.render("#{Skin.root}/app/users/public/login.jade", email: req.body.email)
+        return res.render("#{Code.root}/app/users/public/login.jade", email: req.body.email)
   
   email = (req.body.email || '').toLowerCase()
   if !((req.body.username || email) && req.body.password)

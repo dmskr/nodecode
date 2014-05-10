@@ -1,7 +1,7 @@
-Skin.apps = {} if !Skin.apps
+Code.apps = {} if !Code.apps
 
-apps = Skin.apps
-files = fs.readdirSync("#{Skin.root}/app").findAll (name) ->
+apps = Code.apps
+files = fs.readdirSync("#{Code.root}/app").findAll (name) ->
   name != '.' && name != '..'
 
 files.each (name) ->
@@ -10,17 +10,17 @@ files.each (name) ->
   
   # Setup public/private/admin controllers
   ['admin', 'public', 'private'].each (role) ->
-    path = "#{Skin.root}/app/#{name}/#{role}_controller"
+    path = "#{Code.root}/app/#{name}/#{role}_controller"
     if fs.existsSync("#{path}.coffee")
       apps[name].controller[role] = require(path)
 
   # Setup default model if exist
-  model = "#{Skin.root}/app/#{name}/#{name.singularize()}"
+  model = "#{Code.root}/app/#{name}/#{name.singularize()}"
   if fs.existsSync("#{model}.coffee")
     require(model)
 
 # Additional models
-require "#{Skin.root}/app/shared/keywords"
+require "#{Code.root}/app/shared/keywords"
 
 # Additional controllers out of public/private/admin scheme
 apps.users.controller.sessions = require("../app/users/sessions_controller")
@@ -37,11 +37,11 @@ global.require_admin = (req, res, next) ->
 # Set routes
 files.each (name) ->
   apps[name].routes = require("../app/#{name}/routes")
-  apps[name].routes.route(Skin)
+  apps[name].routes.route(Code)
 
 # The 404 Route (ALWAYS Keep this as the last route)
-if Skin.apps.shared
-  Skin.get('/*', Skin.apps.shared.controller.public.notFound)
-  Skin.post('/*', Skin.apps.shared.controller.public.notFound)
+if Code.apps.shared
+  Code.get('/*', Code.apps.shared.controller.public.notFound)
+  Code.post('/*', Code.apps.shared.controller.public.notFound)
 
 
